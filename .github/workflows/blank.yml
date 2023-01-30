@@ -24,8 +24,11 @@ jobs:
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v3
+      
+      - name: Install ogr2ogr
+        run: sudo apt install -y gdal-bin
 
-      # Runs a single command using the runners shell
+      # Run Setup
       - name: Run a one-line script
         run: ./setup.sh
 
