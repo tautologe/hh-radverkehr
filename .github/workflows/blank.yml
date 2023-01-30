@@ -35,5 +35,7 @@ jobs:
       # Runs a set of commands using the runners shell
       - name: Download
         run: wget -O HH_WFS_DB_Rad_Plus.gml "https://geodienste.hamburg.de/HH_WFS_DB_Rad_Plus?SERVICE=WFS&VERSION=1.1.0&REQUEST=GetFeature&typename=de.hh.up:aktuelles_jahr,de.hh.up:letzte_woche,de.hh.up:jahr2022"
-      - name: Convert
+      - name: Convert 2023
         run: ogr2ogr -f "GeoJSON" dbrad2023.json  -s_srs EPSG:25832 -t_srs WGS84 -skipfailures HH_WFS_DB_Rad_Plus.gml aktuelles_jahr
+      - name: Convert Letzte Woche
+        run: ogr2ogr -f "GeoJSON" dbrad2023_woche.json  -s_srs EPSG:25832 -t_srs WGS84 -skipfailures HH_WFS_DB_Rad_Plus.gml letzte_woche
