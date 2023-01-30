@@ -5,10 +5,8 @@ name: CI
 # Controls when the workflow will run
 on:
   # Triggers the workflow on push or pull request events but only for the "main" branch
-  push:
-    branches: [ "main" ]
-  pull_request:
-    branches: [ "main" ]
+  schedule:
+    - cron: '30 5 * * *' # 5:30 UTC
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
@@ -34,8 +32,14 @@ jobs:
 
       # Runs a set of commands using the runners shell
       - name: Download
-        run: wget -O HH_WFS_DB_Rad_Plus.gml "https://geodienste.hamburg.de/HH_WFS_DB_Rad_Plus?SERVICE=WFS&VERSION=1.1.0&REQUEST=GetFeature&typename=de.hh.up:aktuelles_jahr,de.hh.up:letzte_woche,de.hh.up:jahr2022"
+        run: mkdir -p dist/ && wget -O HH_WFS_DB_Rad_Plus.gml "https://geodienste.hamburg.de/HH_WFS_DB_Rad_Plus?SERVICE=WFS&VERSION=1.1.0&REQUEST=GetFeature&typename=de.hh.up:aktuelles_jahr,de.hh.up:letzte_woche,de.hh.up:jahr2022"
       - name: Convert 2023
-        run: ogr2ogr -f "GeoJSON" dbrad2023.json  -s_srs EPSG:25832 -t_srs WGS84 -skipfailures HH_WFS_DB_Rad_Plus.gml aktuelles_jahr
+        run: ogr2ogr -f "GeoJSON" dist/dbrad2023.json  -s_srs EPSG:25832 -t_srs WGS84 -skipfailures HH_WFS_DB_Rad_Plus.gml aktuelles_jahr
       - name: Convert Letzte Woche
-        run: ogr2ogr -f "GeoJSON" dbrad2023_woche.json  -s_srs EPSG:25832 -t_srs WGS84 -skipfailures HH_WFS_DB_Rad_Plus.gml letzte_woche
+        run: ogr2ogr -f "GeoJSON" dist/dbrad2023_woche.json  -s_srs EPSG:25832 -t_srs WGS84 -skipfailures HH_WFS_DB_Rad_Plus.gml letzte_woche
+      - name: Archive GeoJSON
+        uses: actions/upload-artifact@v3
+        with:
+          name: dist-json
+          path: |
+            dist/*.json
