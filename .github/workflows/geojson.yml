@@ -1,36 +1,19 @@
-# This is a basic workflow to help you get started with Actions
+name: Download Radverkehrsdaten
 
-name: CI
-
-# Controls when the workflow will run
 on:
-  # Triggers the workflow on push or pull request events but only for the "main" branch
   schedule:
     - cron: '30 5 * * *' # 5:30 UTC
-
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
-# A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
   # This workflow contains a single job called "build"
   build:
-    # The type of runner that the job will run on
     runs-on: ubuntu-latest
-
-    # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
-      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v3
-      
       - name: Install ogr2ogr
         run: sudo apt install -y gdal-bin
-
-      # Run Setup
-      #- name: Run a one-line script
-      #  run: ./setup.sh
-
-      # Runs a set of commands using the runners shell
       - name: Download
         run: mkdir -p dist/ && wget -O HH_WFS_DB_Rad_Plus.gml "https://geodienste.hamburg.de/HH_WFS_DB_Rad_Plus?SERVICE=WFS&VERSION=1.1.0&REQUEST=GetFeature&typename=de.hh.up:aktuelles_jahr,de.hh.up:letzte_woche,de.hh.up:jahr2022"
       - name: Convert 2023
